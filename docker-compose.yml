@@ -1,0 +1,72 @@
+version: "3.8"
+
+services:
+  registry-service:
+    image: ghcr.io/masumi-network/masumi-registry-service:0.19.0
+    container_name: masumi-registry-service
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/masumi_registry?schema=public
+      - ADMIN_KEY=${ADMIN_KEY}
+      - Blockfrost_API_KEY_Preprod=${BLOCKFROST_API_KEY_PREPROD}
+      - SEED_ONLY_IF_EMPTY=TRUE
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: >
+      sh -c "npm run prisma:migrate && npm run prisma:seed && npm start"
+
+    networks:
+      - masumi-network
+    restart: unless-stopped
+
+  payment-service:
+    image: ghcr.io/masumi-network/masumi-payment-service:0.18.0
+    container_name: masumi-payment-service
+    ports:
+      - "3001:3001"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/masumi_payment?schema=public
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - ADMIN_KEY=${ADMIN_KEY}
+      - BLOCKFROST_API_KEY_PREPROD=${BLOCKFROST_API_KEY_PREPROD}
+      - SEED_ONLY_IF_EMPTY=TRUE
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: >
+      sh -c "npm run prisma:migrate && npm run prisma:seed && npm start"
+    networks:
+      - masumi-network
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15
+    container_name: masumi-postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_MULTIPLE_DATABASES=masumi_registry,masumi_payment
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-multiple-dbs.sh:/docker-entrypoint-initdb.d/init-multiple-dbs.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - masumi-network
+    restart: unless-stopped
+
+networks:
+  masumi-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    name: masumi_postgres_data
+    driver: local
