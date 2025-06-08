@@ -37,7 +37,7 @@ This repository contains a Docker Compose configuration to run both the Masumi R
 
    - Create the required databases
    - Run database migrations
-   - Seed the databases only if they are empty
+   - Seed the databases (only if they are empty)
    - Start the services
 
 ## Services
