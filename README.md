@@ -37,7 +37,7 @@ This repository contains a Docker Compose configuration to run both the Masumi R
 
    - Create the required databases
    - Run database migrations
-   - Seed the databases only if they are empty
+   - Seed the databases (only if they are empty)
    - Start the services
 
 ## Services
@@ -69,7 +69,6 @@ The setup includes several features to ensure data persistence:
    - Services will restart when the system reboots
 
 3. **Database Initialization**:
-   - The `init-multiple-dbs.sh` script only runs on first startup
    - Existing data is preserved during container restarts
    - Seeding only occurs on empty databases
 
