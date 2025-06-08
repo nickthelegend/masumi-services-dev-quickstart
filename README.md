@@ -69,7 +69,6 @@ The setup includes several features to ensure data persistence:
    - Services will restart when the system reboots
 
 3. **Database Initialization**:
-   - The `init-multiple-dbs.sh` script only runs on first startup
    - Existing data is preserved during container restarts
    - Seeding only occurs on empty databases
 
