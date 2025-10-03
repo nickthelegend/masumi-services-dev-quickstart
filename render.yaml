@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: registry-service
+    env: docker
+    image:
+      name: ghcr.io/masumi-network/masumi-registry-service:0.22.0
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        value: postgresql://postgres:postgres@postgres-registry:5432/postgres?schema=public
+      - key: ADMIN_KEY
+        sync: false
+      - key: BLOCKFROST_API_KEY_PREPROD
+        sync: false
+      - key: SEED_ONLY_IF_EMPTY
+        value: "TRUE"
+
+  - type: web
+    name: payment-service
+    env: docker
+    image:
+      name: ghcr.io/masumi-network/masumi-payment-service:0.22.0
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        value: postgresql://postgres:postgres@postgres-payment:5432/postgres?schema=public
+      - key: ENCRYPTION_KEY
+        sync: false
+      - key: ADMIN_KEY
+        sync: false
+      - key: BLOCKFROST_API_KEY_PREPROD
+        sync: false
+      - key: SEED_ONLY_IF_EMPTY
+        value: "TRUE"
