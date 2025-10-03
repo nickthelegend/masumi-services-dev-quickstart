@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: masumi-services
+    env: docker
+    dockerComposeFilePath: ./docker-compose.yml
+    dockerComposeService: registry-service
