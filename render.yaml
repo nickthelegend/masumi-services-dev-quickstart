@@ -1,34 +1,57 @@
 services:
   - type: web
-    name: registry-service
+    name: masumi-registry-service
     env: docker
-    image:
-      name: ghcr.io/masumi-network/masumi-registry-service:0.22.0
+    dockerfilePath: ./registry-service/Dockerfile
     plan: free
+    region: oregon
+    buildCommand: ""
+    startCommand: ""
     envVars:
       - key: DATABASE_URL
-        value: postgresql://postgres:postgres@postgres-registry:5432/postgres?schema=public
+        value: postgresql://postgres:changeme@postgres-registry:5432/postgres?schema=public
       - key: ADMIN_KEY
-        sync: false
+        value: changeme
       - key: BLOCKFROST_API_KEY_PREPROD
-        sync: false
+        value: changeme
       - key: SEED_ONLY_IF_EMPTY
         value: "TRUE"
+    ports:
+      - 3000
 
   - type: web
-    name: payment-service
+    name: masumi-payment-service
     env: docker
-    image:
-      name: ghcr.io/masumi-network/masumi-payment-service:0.22.0
+    dockerfilePath: ./payment-service/Dockerfile
     plan: free
+    region: oregon
+    buildCommand: ""
+    startCommand: ""
     envVars:
       - key: DATABASE_URL
-        value: postgresql://postgres:postgres@postgres-payment:5432/postgres?schema=public
+        value: postgresql://postgres:changeme@postgres-payment:5432/postgres?schema=public
       - key: ENCRYPTION_KEY
-        sync: false
+        value: changeme
       - key: ADMIN_KEY
-        sync: false
+        value: changeme
       - key: BLOCKFROST_API_KEY_PREPROD
-        sync: false
+        value: changeme
       - key: SEED_ONLY_IF_EMPTY
         value: "TRUE"
+    ports:
+      - 3001
+
+databases:
+  - name: postgres-registry
+    databaseName: postgres
+    user: postgres
+    password: changeme
+    plan: free
+    region: oregon
+
+  - name: postgres-payment
+    databaseName: postgres
+    user: postgres
+    password: changeme
+    plan: free
+    region: oregon
